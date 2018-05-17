@@ -25,5 +25,11 @@ public interface ICommandLineService extends IService{
 
     public void populateAudit(String input);
 
+    public void populateAudit(String url, String driver, String user, String password);
+
+    public void generateAuditReport(String path);
+
     public void generateAuditReport(String input, String path);
+
+    public void generateAuditReport(String auditId, String path, String template);
 }
