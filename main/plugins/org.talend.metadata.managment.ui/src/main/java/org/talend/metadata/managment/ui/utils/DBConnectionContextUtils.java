@@ -56,6 +56,7 @@ import org.talend.designer.core.model.utils.emf.talendfile.ContextType;
 import org.talend.metadata.managment.repository.ManagerConnection;
 import org.talend.metadata.managment.ui.model.IConnParamName;
 import org.talend.model.bridge.ReponsitoryContextBridge;
+
 import orgomg.cwm.objectmodel.core.ModelElement;
 import orgomg.cwm.resource.relational.Catalog;
 import orgomg.cwm.resource.relational.Schema;
@@ -103,6 +104,7 @@ public final class DBConnectionContextUtils {
         HivePassword,
         HiveKeyTabPrincipal,
         HiveKeyTab,
+        HiveMetastorePort,
         hiveAdditionalJDBCParameters,
         hiveUseSSL,
         hiveSSLTrustStorePath,
@@ -264,6 +266,10 @@ public final class DBConnectionContextUtils {
                     break;
                 case HiveKeyTab:
                     value = conn.getParameters().get(ConnParameterKeys.CONN_PARA_KEY_KEYTAB);
+                    ConnectionContextHelper.createParameters(varList, paramName, value);
+                    break;
+                case HiveMetastorePort:
+                    value = conn.getParameters().get(ConnParameterKeys.CONN_PARA_KEY_HIVE_THRIFTPORT);
                     ConnectionContextHelper.createParameters(varList, paramName, value);
                     break;
                 case hiveAdditionalJDBCParameters:
@@ -655,6 +661,10 @@ public final class DBConnectionContextUtils {
             break;
         case HiveKeyTab:
             conn.getParameters().put(ConnParameterKeys.CONN_PARA_KEY_KEYTAB,
+                    ContextParameterUtils.getNewScriptCode(originalVariableName, LANGUAGE));
+            break;
+        case HiveMetastorePort:
+            conn.getParameters().put(ConnParameterKeys.CONN_PARA_KEY_HIVE_THRIFTPORT,
                     ContextParameterUtils.getNewScriptCode(originalVariableName, LANGUAGE));
             break;
         case hiveAdditionalJDBCParameters:
@@ -1083,6 +1093,10 @@ public final class DBConnectionContextUtils {
             cloneConn.getParameters().put(ConnParameterKeys.CONN_PARA_KEY_HIVE_JDBC_PROPERTIES,
                     HadoopRepositoryUtil.getOriginalValueOfProperties(jdbcPropertiesString, contextType));
 
+            String hiveMetastorePort = cloneConn.getParameters().get(ConnParameterKeys.CONN_PARA_KEY_HIVE_THRIFTPORT);
+            cloneConn.getParameters().put(ConnParameterKeys.CONN_PARA_KEY_HIVE_THRIFTPORT,
+                    getOriginalValue(hadoopClusterContextType, contextType, hiveMetastorePort));
+
             String additionalJDBCSettings =
                     cloneConn.getParameters().get(ConnParameterKeys.CONN_PARA_KEY_HIVE_ADDITIONAL_JDBC_SETTINGS);
             cloneConn.getParameters().put(ConnParameterKeys.CONN_PARA_KEY_HIVE_ADDITIONAL_JDBC_SETTINGS,
@@ -1465,6 +1479,10 @@ public final class DBConnectionContextUtils {
                     conn.getParameters().get(ConnParameterKeys.CONN_PARA_KEY_HIVE_ADDITIONAL_JDBC_SETTINGS);
             conn.getParameters().put(ConnParameterKeys.CONN_PARA_KEY_HIVE_ADDITIONAL_JDBC_SETTINGS,
                     ContextParameterUtils.getOriginalValue(contextType, addtionalJDBCParameters));
+
+            String metastoreport = conn.getParameters().get(ConnParameterKeys.CONN_PARA_KEY_HIVE_THRIFTPORT);
+            conn.getParameters().put(ConnParameterKeys.CONN_PARA_KEY_HIVE_THRIFTPORT,
+                    ContextParameterUtils.getOriginalValue(contextType, metastoreport));
 
             String sslTrustStorePath = conn.getParameters().get(ConnParameterKeys.CONN_PARA_KEY_SSL_TRUST_STORE_PATH);
             conn.getParameters().put(ConnParameterKeys.CONN_PARA_KEY_SSL_TRUST_STORE_PATH,
