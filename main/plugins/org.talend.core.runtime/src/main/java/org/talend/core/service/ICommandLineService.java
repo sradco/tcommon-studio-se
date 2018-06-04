@@ -22,8 +22,6 @@ import org.talend.utils.sugars.TypedReturnCode;
  */
 public interface ICommandLineService extends IService{
 
-    public void initEMFQuery();
-
     public void populateAudit(String url, String driver, String user, String password);
 
     public void generateAuditReport(String path);
